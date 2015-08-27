@@ -1,6 +1,6 @@
 #include <LibAPRS.h>
 #include <string.h>
-#include "U8glib.h"
+#include <U8glib.h>
 #include <TinyGPS++.h>
 
 U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE);
@@ -61,25 +61,33 @@ void setup() {
 
   Serial.begin(9600);
   delay(200);
-  Serial.println("AT+DMOSETGROUP=1,144.8000,144.8000,0000,1,0000");
-  delay(100);
-  Serial.print("AT+DMOSETVOLUME=8");
+  Serial.println("AT+DMOCONNECT");
+  delay(200);
+  Serial.println("AT+DMOSETGROUP=1,144.3900,144.3900,0000,1,0000");
+  delay(200);
+  Serial.println("AT+SETFILTER=0,1,0");
+  delay(200);
+  Serial.println("AT+DMOSETVOLUME=8");
 
   // Initialise APRS library - This starts the modem
   APRS_init(ADC_REFERENCE, OPEN_SQUELCH);
 
   // You must at a minimum configure your callsign and SSID
-  APRS_setCallsign("LZ1PPL", 9);
+  APRS_setCallsign("WA6MAT", 9);
 
   // You can define preamble and tail like this:
-  APRS_setPreamble(350);
-  APRS_setTail(100);
+  APRS_setPreamble(550);
+  APRS_setTail(250);
 
   // You can use the normal or alternate symbol table:
   // APRS_useAlternateSymbolTable(false);
 
   // And set what symbol you want to use:
   APRS_setSymbol('>');
+      char *comment = "";
+//    APRS_sendLoc(comment, strlen(comment));
+//  APRS_sendPkt(comment, strlen(comment));
+
 }
 
 
@@ -112,7 +120,10 @@ void TxtoRadio()
     int cur_len = strlen(latOut);
     latOut[cur_len] = nw;
     latOut[cur_len+1] = '\0';
-
+    Serial.println(lngDegMin);
+    delay(200);
+//    Serial.println(lngDegMin);
+//    delay(200);
     if(lngDegMin < 10000)
     {
       int n = strlen(lngOutTmp);
@@ -128,22 +139,25 @@ void TxtoRadio()
       lngOut[cur_len] = '\0';
     } 
     else {
-      strncpy(lngOut, lngOutTmp, 15); 
+      strncpy(lngOut, lngOutTmp, 13); 
     }
-
+    Serial.println(lngOutTmp);
+    delay(200);
+    Serial.println(lngOut);
+    delay(200);
     lngOut[cur_len] = wl;
     lngOut[cur_len+1] = '\0';  
-
+    strcat (lngOut,"W");
     // And send the update
 
-    APRS_setLat(latOut);
-    APRS_setLon(lngOut);
+   APRS_setLat(latOut);
+   APRS_setLon(lngOut);
 
 
     // And send the update
-    char *comment = "";
+    char *comment = "VST v2 Run Forrest Run";
     APRS_sendLoc(comment, strlen(comment));
-
+    
     // Reset the Tx internal
     lastTxdistance = 0;   // Ensure this value is zero before the next Tx
     lastTxLat = lat;
@@ -223,7 +237,7 @@ void loop() {
     lon = gps.location.lng();
 
     nw = gps.location.rawLat().negative ? 'S' : 'N';
-    wl = gps.location.rawLng().negative ? 'W' : 'E';
+    wl = gps.location.rawLng().negative ? 'E' : 'W';
     // Get headings and heading delta
 
     headingDelta = abs(lastbearing - (int)gps.course.deg());
@@ -355,7 +369,7 @@ void loop() {
 
     }
 
-    else if ( (millis()-lastTx) > 900000) // every 15 minutes
+    else if ( (millis()-lastTx) > 30000) // every 30 seconds
     {
       TxtoRadio();
       txCounter++;
@@ -426,21 +440,21 @@ float convertDegMin(float decDeg)
 /*
 String padding( int number, byte width )
  {
- 	String result;
+   String result;
  
- 	// Prevent a log10(0) = infinity
- 	int temp = number;
- 	if (!temp)
- 	{
- 		temp++;
- 	}
+  // Prevent a log10(0) = infinity
+  int temp = number;
+  if (!temp)
+  {
+    temp++;
+  }
  
- 	for ( int i = 0; i < width - (log10(temp)) - 1; i++)
- 	{
- 		result.concat('0');
- 	}
- 	result.concat(number);
- 	return result;
+  for ( int i = 0; i < width - (log10(temp)) - 1; i++)
+  {
+    result.concat('0');
+  }
+  result.concat(number);
+  return result;
  }
  */
 
