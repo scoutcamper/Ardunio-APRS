@@ -1,3 +1,22 @@
+/*
+Arduino APRS: A program to send APRS Loacation Packets using data from a NMEA GPSs and transmitting through a DRA818V
+Based on work by Plamen Panteleev LZ1PPL.
+Copyright (C) 2015 Matthew Van Gent WA6MAT
+All rights reserved.
+Arduino APRS is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or 
+(at your option) any later version.
+
+Arduino-APRS is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Arduino-APRS.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <LibAPRS.h>
 #include <string.h>
 #include <U8glib.h>
