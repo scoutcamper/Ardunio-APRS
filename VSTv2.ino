@@ -151,27 +151,35 @@ void TxtoRadio()
 
       for(int i = 1; i < n + 1; i++)
       {
-        lngOut[i] = lngOutTmp[i-1];
+        lngOut[i] = lngOutTmp[i];
       }
 
       cur_len = strlen(lngOut);
       lngOut[cur_len] = '\0';
     } 
     else {
-      strncpy(lngOut, lngOutTmp, 13); 
+      strncpy(lngOut, lngOutTmp-1, 8); 
     }
     Serial.println(lngOutTmp);
     delay(200);
     Serial.println(lngOut);
     delay(200);
-    lngOut[cur_len] = wl;
-    lngOut[cur_len+1] = '\0';  
+    Serial.println(lngDegMin);
+    delay(200);
     strcat (lngOut,"W");
+    //lngOut[cur_len] = 'W';
+    lngOut[cur_len+1] = '\0';  
+    //
     // And send the update
+    if (lngOut[0] == '0') 
+    memmove(lngOut, lngOut+1, strlen(lngOut));
 
    APRS_setLat(latOut);
    APRS_setLon(lngOut);
-
+   Serial.println(latOut);
+   delay(200);
+   Serial.println(lngOut);
+   delay(200);
 
     // And send the update
     char *comment = "VST v2 Run Forrest Run";
